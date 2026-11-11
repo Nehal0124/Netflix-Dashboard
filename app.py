@@ -27,7 +27,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------- LOAD DATA ----------------
-DATA_PATH = Path(__file__).parent / "data" / "netflix_titles.csv"
+DATA_PATH = Path(__file__).parent / "netflix_titles.csv"
 
 @st.cache_data
 def load_data(file_path):
