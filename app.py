@@ -31,8 +31,13 @@ DATA_PATH = Path(__file__).parent / "data" / "data" / "data" / "netflix_titles.c
 
 @st.cache_data
 def load_data(file_path):
-    data = pd.read_csv(file_path)
-    data.columns = data.columns.str.strip().str.lower()
+    try:
+        data = pd.read_csv(file_path)
+        data.columns = data.columns.str.strip().str.lower()
+        return data
+    except Exception as e:
+        st.error(f"Could not load dataset: {e}")
+        st.stop()
 
     required = {
         "show_id", "type", "title", "director", "cast", "country",
