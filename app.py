@@ -27,7 +27,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------- LOAD DATA ----------------
-DATA_PATH = Path(__file__).parent / "data" / "data" / "data" / "netflix_titles.csv"
+DATA_PATH = Path(__file__).parent / "netflix_titles.csv"
+if not DATA_PATH.exists():
+    st.error(f"Dataset not found at: {DATA_PATH}")
+    st.stop()
+
+df = load_data(DATA_PATH)
 
 @st.cache_data
 def load_data(file_path):
