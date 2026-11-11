@@ -27,55 +27,45 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------- LOAD DATA ----------------
-DATA_PATH = Path(__file__).parent / "netflix_titles.csv"
-if not DATA_PATH.exists():
-    st.error(f"Dataset not found at: {DATA_PATH}")
-    st.stop()
 
-df = load_data(DATA_PATH)
+# ---------------- LOAD DATA ----------------
+DATA_PATH = Path(__file__).parent / "netflix_titles.csv"
 
 @st.cache_data
 def load_data(file_path):
-    try:
-        data = pd.read_csv(file_path)
-        data.columns = data.columns.str.strip().str.lower()
-        return data
-    except Exception as e:
-        st.error(f"Could not load dataset: {e}")
-        st.stop()
+    data = pd.read_csv(file_path)
+    data.columns = data.columns.str.strip().str.lower()
 
     required = {
         "show_id", "type", "title", "director", "cast", "country",
         "date_added", "release_year", "rating", "duration",
         "listed_in", "description"
     }
+
     missing = required - set(data.columns)
     if missing:
-        raise ValueError("CSV is missing required columns: " + ", ".join(sorted(missing)))
+        raise ValueError(
+            "CSV is missing required columns: " + ", ".join(sorted(missing))
+        )
 
     data["date_added"] = pd.to_datetime(
         data["date_added"].astype("string").str.strip(),
         errors="coerce"
     )
     data["year_added"] = data["date_added"].dt.year
-    data["release_year"] = pd.to_numeric(data["release_year"], errors="coerce")
+    data["release_year"] = pd.to_numeric(
+        data["release_year"], errors="coerce"
+    )
     data["type"] = data["type"].astype("string").str.strip()
     data["country"] = data["country"].astype("string")
     data["rating"] = data["rating"].astype("string")
     data["listed_in"] = data["listed_in"].astype("string")
+
     return data
 
-st.title("🎬 Netflix Data Analytics Dashboard")
-st.caption("Explore Netflix movies, TV shows, genres, ratings and global content trends.")
-st.divider()
 
 if not DATA_PATH.exists():
-    st.error("Dataset file not found.")
-    st.markdown(
-        "Please place **netflix_titles.csv** inside the project's **data** folder. "
-        "The expected location is `Netflix_Dashboard_Project/data/netflix_titles.csv`."
-    )
-    st.info("The CSV should be the Netflix titles dataset with columns such as title, type, country, release_year, rating and listed_in.")
+    st.error(f"Dataset not found at: {DATA_PATH}")
     st.stop()
 
 try:
@@ -83,6 +73,7 @@ try:
 except Exception as error:
     st.error(f"Could not load the dataset: {error}")
     st.stop()
+
 
 # ---------------- SIDEBAR FILTERS ----------------
 st.sidebar.title("🎛️ Dashboard Filters")
